@@ -36,6 +36,17 @@ export function isString(val: any): val is string {
   return typeof val === 'string'
 }
 
-export function isVoid(val: any): val is null | undefined {
+export function isVoid(val: any): val is null | undefined | void {
   return isNull(val) || isUndef(val)
+}
+
+export function isEmptyArray(val: any): val is [] {
+  return isArray(val) && val.length === 0
+}
+
+export function extend<T, U>(to: T, from: U): T & U {
+  for (const key in from) {
+    ;(to as T & U)[key] = from[key] as any
+  }
+  return to as T & U
 }

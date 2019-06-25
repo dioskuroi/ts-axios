@@ -1,38 +1,17 @@
-// 编写类型时，最好将类型定义都放在 types 目录下，这样这个项目的业务代码会比较清晰
-import { AxiosRequestConfig, AxiosPromise, AxiosResponse } from './types'
-import xhr from './xhr'
-import { buildUrl } from './helpers/url'
-import { transformRequest, transformResponse } from './helpers/data'
-import { processHeaders } from './helpers/headers'
+import { AxiosInstance } from './types'
+import Axios from './core/Axios'
+import { extend } from './helpers/util'
 
-function axios(config: AxiosRequestConfig): AxiosPromise {
-  processConfig(config)
-  return xhr(config).then(res => transformResponseData(res))
+function createIntance(): AxiosInstance {
+  const context = new Axios()
+  // ? 这里是为了可以直接调用 axios()
+  // ? bind 是用来处理 Axios.prototype.request 函数中 this 指向问题
+  const instance = Axios.prototype.request.bind(context)
+  // 将实例上的方法合并到 axios 函数上
+  extend(instance, context)
+  return instance as AxiosInstance
 }
-// 处理请求 config
-function processConfig(config: AxiosRequestConfig): void {
-  config.url = transformURL(config)
-  config.headers = transformHeaders(config)
-  config.data = transformRequestData(config)
-}
-// 转换 URL
-function transformURL(config: AxiosRequestConfig): string {
-  const { url, params } = config
-  return buildUrl(url, params)
-}
-// 转换请求体数据
-function transformRequestData(config: AxiosRequestConfig): any {
-  return transformRequest(config.data)
-}
-// 转换请求头
-function transformHeaders(config: AxiosRequestConfig): any {
-  const { headers = {}, data } = config
-  return processHeaders(headers, data)
-}
-// 转换响应体数据
-function transformResponseData(res: AxiosResponse): AxiosResponse {
-  res.data = transformResponse(res.data)
-  return res
-}
+
+const axios = createIntance()
 
 export default axios
