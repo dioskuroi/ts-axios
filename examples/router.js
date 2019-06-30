@@ -86,4 +86,9 @@ router.get('/extend/user', (req, res) => {
     }
   })
 })
+
+router.get('/interceptor/get', (req, res) => {
+  res.end('Hello')
+})
+
 module.exports = router
