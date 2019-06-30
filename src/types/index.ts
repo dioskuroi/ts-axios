@@ -24,6 +24,13 @@ export interface AxiosRequestConfig {
   headers?: any
   responseType?: XMLHttpRequestResponseType
   timeout?: number
+  transformRequest?: AxiosTransformer | AxiosTransformer[]
+  transformResponse?: AxiosTransformer | AxiosTransformer[]
+  [propName: string]: any
+}
+
+export interface AxiosTransformer {
+  (data: any, headers?: any): any
 }
 
 export interface AxiosResponse<T = any> {
@@ -46,6 +53,7 @@ export interface AxiosError extends Error {
 }
 
 export interface Axios {
+  defaults: AxiosRequestConfig
   // 新增拦截器接口配置
   // ! 注意：这里使用 AxiosInterceptorManager 接口而不是 InterceptorManager 类，
   // ! 因为我们不想让外部使用者使用到 InterceptorManager 中的 forEach 函数，
@@ -68,6 +76,10 @@ export interface AxiosInstance extends Axios {
   <T = any>(config: AxiosRequestConfig): AxiosPromise<T>
 
   <T = any>(url: string, config?: AxiosRequestConfig): AxiosPromise<T>
+}
+
+export interface AxiosStatic extends AxiosInstance {
+  create(config?: AxiosRequestConfig): AxiosInstance
 }
 
 export interface AxiosInterceptorManager<T> {

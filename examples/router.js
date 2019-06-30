@@ -91,4 +91,12 @@ router.get('/interceptor/get', (req, res) => {
   res.end('Hello')
 })
 
+router.post('/config/post', (req, res) => {
+  res.json(req.body)
+})
+
+router.post('/transform/post', (req, res) => {
+  res.json(req.body)
+})
+
 module.exports = router

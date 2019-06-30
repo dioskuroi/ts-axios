@@ -9,6 +9,7 @@ import {
 import InterceptorManager from './interceptorManager'
 import dispatchRequest from './dispatchRequest'
 import { isString, isVoid } from '../helpers/util'
+import mergeConfig from './mergeConfig'
 
 // * 注意：这里定义的 Interceptors 接口中 request 和 response 是 InterceptorManager 类，
 // * 而不是 AxiosinterceptorManager 接口，因为我们需要使用 forEach 函数
@@ -30,9 +31,11 @@ interface PromiseChain<T> {
 }
 
 export default class Axios {
+  defaults: AxiosRequestConfig
   interceptors: Interceptors
 
-  constructor() {
+  constructor(initConfig: AxiosRequestConfig) {
+    this.defaults = initConfig
     // 这里生成请求拦截器和响应拦截器
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
@@ -52,6 +55,9 @@ export default class Axios {
     } else {
       config = url
     }
+    // * 合并 config
+    config = mergeConfig(this.defaults, config)
+
     // * 这里泛型传any 因为可能是 undefined 、 AxiosRequestConfig 或者 AxiosResponse
     // * 先将默认的发送请求函数加入 chain 链条中
     const chain: PromiseChain<any>[] = [
