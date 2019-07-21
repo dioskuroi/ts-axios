@@ -2,6 +2,8 @@ import { AxiosRequestConfig, AxiosStatic } from './types'
 import Axios from './core/Axios'
 import defaults from './defaults'
 import { extend, deepMerge } from './helpers/util'
+import CancelToken from './cancel/CancellToken'
+import Cancel, { isCancel } from './cancel/Cancel'
 
 function createIntance(config: AxiosRequestConfig): AxiosStatic {
   const context = new Axios(config)
@@ -18,5 +20,21 @@ const axios = createIntance(defaults)
 axios.create = function(config) {
   return createIntance(deepMerge(defaults, config))
 }
+
+axios.CancelToken = CancelToken
+axios.Cancel = Cancel
+axios.isCancel = isCancel
+
+axios.all = function all(promises) {
+  return Promise.all(promises)
+}
+
+axios.spread = function spread(callback) {
+  return function wrap(arr) {
+    return callback.apply(null, arr)
+  }
+}
+
+axios.Axios = Axios
 
 export default axios

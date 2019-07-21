@@ -22,7 +22,7 @@ export class AxiosError extends Error {
     this.isAxiosError = true
 
     // ! 当一个类继承自内置对象时，如 Error Array Map 时，typescript 会有 bug 无法识别 this
-    // ! 所以这里要显示的设置一下原形链
+    // ! 所以这里要显式的设置一下原形链
     Object.setPrototypeOf(this, AxiosError.prototype)
   }
 }
